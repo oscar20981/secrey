@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💜💜💜</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      background: url('./fonfo%202.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .flower {
+      position: absolute;
+      bottom: 0;
+      width: 60px;
+      height: 60px;
+      z-index: 2;
+      animation: flower-sway 4s infinite alternate ease-in-out;
+    }
+    @keyframes flower-sway {
+      0% { transform: rotate(-7deg);}
+      100% { transform: rotate(7deg);}
+    }
+    .butterfly {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .butterfly.big {
+      width: 120px; /* más grande */
+      height: 120px;
+      z-index: 15;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.5s;
+    }
+    .big.centered {
+      transition: transform 0.7s, opacity 0.7s;
+      transform: translate(calc(50vw - 60px), calc(50vh - 60px)) scale(1.1);
+      opacity: 1;
+    }
+    .big.hide-svg {
+      opacity: 0;
+    }
+    .big-img {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      left: calc(50vw - 60px);
+      top: calc(50vh - 60px);
+      z-index: 16;
+      cursor: pointer;
+      transition: opacity 0.5s;
+      opacity: 1;
+      display: none;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(40,0,80,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal img {
+      max-width: 80vw;
+      max-height: 80vh;
+      box-shadow: 0 0 20px #0006;
+      border: 5px solid #fff;
+      border-radius: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Flores decorativas abajo -->
+  <!-- ...tus flores aquí... -->
+  <div class="flower" style="left: 30px;">
+    <!-- igual que antes -->
+  </div>
+  <div class="flower" style="left: 130px;">
+    <!-- igual que antes -->
+  </div>
+  <div class="flower" style="left: 320px;">
+    <!-- igual que antes -->
+  </div>
+
+  <!-- Modal para ver foto -->
+  <div class="modal" id="modal">
+    <img id="modal-img" src="./1.jpg" alt="Foto grande">
+    <img id="modal-img" src="./2.jpg" alt="Foto grande">
+  </div>
+
+  <script>
+    // SVG para mariposas (igual que tu último código)
+    function butterflySVG() {
+      return `<svg viewBox="0 0 40 40">
+        <ellipse cx="10" cy="20" rx="10" ry="16" fill="#a37fff" opacity="0.9"/>
+        <ellipse cx="30" cy="20" rx="10" ry="16" fill="#a37fff" opacity="0.9"/>
+        <ellipse cx="20" cy="20" rx="7" ry="13" fill="#a950ff" opacity="0.6"/>
+        <circle cx="20" cy="28" r="5" fill="#8D28D9"/>
+      </svg>`;
+    }
+    // SVG para mariposa grande (más grande aquí)
+    function bigButterflySVG() {
+      return `<svg viewBox="0 0 120 120">
+        <ellipse cx="35" cy="60" rx="32" ry="48" fill="#a37fff"/>
+        <ellipse cx="85" cy="60" rx="32" ry="48" fill="#a37fff"/>
+        <ellipse cx="60" cy="60" rx="24" ry="40" fill="#c193ff" opacity="0.7"/>
+        <circle cx="60" cy="85" r="17" fill="#8D28D9"/>
+        <rect x="54" y="68" width="12" height="28" rx="4" fill="#4b1e5a"/>
+        <line x1="60" y1="68" x2="46" y2="50" stroke="#4b1e5a" stroke-width="3"/>
+        <line x1="66" y1="68" x2="88" y2="35" stroke="#4b1e5a" stroke-width="3"/>
+      </svg>`;
+    }
+    // Mariposas pequeñas
+    const butterflies = [];
+    const butterflyCount = 27;
+    for (let i = 0; i < butterflyCount; i++) {
+      let b = document.createElement('div');
+      b.className = 'butterfly';
+      b.innerHTML = butterflySVG();
+      document.body.appendChild(b);
+      butterflies.push({
+        el: b,
+        baseX: Math.random() * window.innerWidth,
+        baseY: Math.random() * (window.innerHeight-120),
+        ampX: 80 + Math.random()*160,
+        ampY: 60 + Math.random()*130,
+        speed: 1 + Math.random()*2,
+        offset: Math.random()*Math.PI*2
+      });
+    }
+    // Mariposa grande con SVG
+    let big = document.createElement('div');
+    big.className = 'butterfly big';
+    big.innerHTML = bigButterflySVG();
+    document.body.appendChild(big);
+    const bigButterfly = {
+      el: big,
+      baseX: window.innerWidth/2,
+      baseY: window.innerHeight/2,
+      ampX: 210,
+      ampY: 130,
+      speed: 0.7,
+      offset: Math.random()*Math.PI*2
+    };
+
+    // Mariposa PNG (cambia el src por el tuyo)
+    let bigImg = document.createElement('img');
+    bigImg.src = "./3.png"; // Ruta a tu imagen PNG
+    bigImg.className = 'big-img';
+    bigImg.alt = 'Mariposa PNG';
+    document.body.appendChild(bigImg);
+
+    let stopped = false;
+    setTimeout(() => {
+      // Después de 8 segundos:
+      stopped = true;
+      big.classList.add('centered');
+      setTimeout(()=>{big.classList.add('hide-svg');},600);
+      setTimeout(()=>{
+        bigImg.style.display = "block";
+        bigImg.style.opacity = "1";
+      },900);
+    }, 8000);
+
+    // Animación en bucle (solo si no está parada)
+    function animateButterflies(t) {
+      butterflies.forEach((bf, idx) => {
+        let angle = t*0.001*bf.speed + bf.offset;
+        let flyX = bf.baseX + Math.cos(angle + idx) * bf.ampX;
+        let flyY = bf.baseY + Math.sin(angle*1.2 + idx) * bf.ampY;
+        flyX = (flyX + window.innerWidth) % window.innerWidth;
+        flyY = (flyY + window.innerHeight-100) % (window.innerHeight-100);
+        bf.el.style.transform = `translate(${flyX}px,${flyY}px)`;
+      });
+      // Mariposa grande sólo vuela si no se ha parado aún
+      if (!stopped) {
+        let t2 = t*0.00052 + bigButterfly.offset;
+        let flyX = bigButterfly.baseX + Math.cos(t2)*bigButterfly.ampX;
+        let flyY = bigButterfly.baseY + Math.sin(t2*1.1)*bigButterfly.ampY;
+        flyX = (flyX + window.innerWidth) % window.innerWidth;
+        flyY = (flyY + window.innerHeight-100) % (window.innerHeight-100);
+        bigButterfly.el.style.transform = `translate(${flyX}px,${flyY}px) scale(1.1)`;
+      }
+      requestAnimationFrame(animateButterflies);
+    }
+    animateButterflies(performance.now());
+
+    window.addEventListener("resize",()=>{
+      butterflies.forEach(bf=>{
+        bf.baseX = Math.random() * window.innerWidth;
+        bf.baseY = Math.random() * (window.innerHeight-160);
+      });
+      bigButterfly.baseX = window.innerWidth/2;
+      bigButterfly.baseY = window.innerHeight/2;
+    });
+
+    // Abrir imagen modal al hacer click en PNG grande
+    bigImg.addEventListener('click',function(){
+      document.getElementById('modal').style.display = "flex";
+    });
+    // Cuando clicas el modal o la imagen, lo cierra
+    document.getElementById('modal').addEventListener('click',function(){
+      this.style.display = "none";
+    });
+    document.getElementById('modal-img').addEventListener('click',function(e){
+      document.getElementById('modal').style.display = "none";
+      e.stopPropagation();
+    });
+  </script>
+</body>
+</html>
